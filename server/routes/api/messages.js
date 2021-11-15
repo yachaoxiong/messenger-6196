@@ -1,9 +1,9 @@
-const router = require("express").Router();
-const { Conversation, Message } = require("../../db/models");
-const onlineUsers = require("../../onlineUsers");
+const router = require('express').Router();
+const { Conversation, Message } = require('../../db/models');
+const onlineUsers = require('../../onlineUsers');
 
 // expects {recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
-router.post("/", async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
@@ -43,4 +43,25 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.post('/readStatus', async (req, res, next) => {
+  const { conversationId } = req.body;
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+  const userId = req.user.id;
+
+  const messages = await Message.findAll({
+    where: {
+      conversationId: conversationId,
+    },
+  });
+  for (let i = 0; i < messages.length; i++) {
+    if (userId !== messages[i].senderId) {
+      messages[i].isRead = true;
+      await messages[i].save();
+    }
+  }
+
+  res.json({ success: 'The message status was updated successfully!' });
+});
 module.exports = router;

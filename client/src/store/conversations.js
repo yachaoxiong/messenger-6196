@@ -4,18 +4,19 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-} from "./utils/reducerFunctions";
+  setMessageStatus,
+} from './utils/reducerFunctions';
 
 // ACTIONS
 
-const GET_CONVERSATIONS = "GET_CONVERSATIONS";
-const SET_MESSAGE = "SET_MESSAGE";
-const ADD_ONLINE_USER = "ADD_ONLINE_USER";
-const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
-const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
-const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
-const ADD_CONVERSATION = "ADD_CONVERSATION";
-
+const GET_CONVERSATIONS = 'GET_CONVERSATIONS';
+const SET_MESSAGE = 'SET_MESSAGE';
+const ADD_ONLINE_USER = 'ADD_ONLINE_USER';
+const REMOVE_OFFLINE_USER = 'REMOVE_OFFLINE_USER';
+const SET_SEARCHED_USERS = 'SET_SEARCHED_USERS';
+const CLEAR_SEARCHED_USERS = 'CLEAR_SEARCHED_USERS';
+const ADD_CONVERSATION = 'ADD_CONVERSATION';
+const SET_MESSAGE_STATUS = 'SET_MESSAGE_STATUS';
 // ACTION CREATORS
 
 export const gotConversations = (conversations) => {
@@ -24,11 +25,17 @@ export const gotConversations = (conversations) => {
     conversations,
   };
 };
+export const setcurrentMessaageStatus = (conversationId) => {
+  return {
+    type: SET_MESSAGE_STATUS,
+    conversationId,
+  };
+};
 
-export const setNewMessage = (message, sender) => {
+export const setNewMessage = (message, sender, activeConversation) => {
   return {
     type: SET_MESSAGE,
-    payload: { message, sender: sender || null },
+    payload: { message, sender: sender || null, activeConversation },
   };
 };
 
@@ -75,6 +82,8 @@ const reducer = (state = [], action) => {
       return action.conversations;
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
+    case SET_MESSAGE_STATUS:
+      return setMessageStatus(state, action.conversationId);
     case ADD_ONLINE_USER: {
       return addOnlineUserToStore(state, action.id);
     }
