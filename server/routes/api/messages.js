@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { Op } = require('sequelize');
 const { Conversation, Message } = require('../../db/models');
 const onlineUsers = require('../../onlineUsers');
 
@@ -49,19 +50,23 @@ router.post('/readStatus', async (req, res, next) => {
     return res.sendStatus(401);
   }
   const userId = req.user.id;
-
-  const messages = await Message.findAll({
+  const conversation = await Conversation.findOne({
     where: {
-      conversationId: conversationId,
+      id: conversationId,
+      [Op.or]: [{ user1Id: userId }, { user2Id: userId }],
     },
   });
-  for (let i = 0; i < messages.length; i++) {
-    if (userId !== messages[i].senderId) {
-      messages[i].isRead = true;
-      await messages[i].save();
-    }
-  }
 
-  res.json({ success: 'The message status was updated successfully!' });
+  if (!conversation) return res.sendStatus(400);
+
+  Message.update(
+    { isRead: true },
+    {
+      where: { senderId: { [Op.not]: userId }, conversationId: conversationId },
+    }
+  );
+
+  return res.sendStatus(204);
 });
+
 module.exports = router;

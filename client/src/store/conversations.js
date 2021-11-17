@@ -25,10 +25,10 @@ export const gotConversations = (conversations) => {
     conversations,
   };
 };
-export const setcurrentMessaageStatus = (conversationId) => {
+export const setcurrentMessaageStatus = (message) => {
   return {
     type: SET_MESSAGE_STATUS,
-    conversationId,
+    lastReadMessage: message,
   };
 };
 
@@ -83,7 +83,7 @@ const reducer = (state = [], action) => {
     case SET_MESSAGE:
       return addMessageToStore(state, action.payload);
     case SET_MESSAGE_STATUS:
-      return setMessageStatus(state, action.conversationId);
+      return setMessageStatus(state, action.lastReadMessage);
     case ADD_ONLINE_USER: {
       return addOnlineUserToStore(state, action.id);
     }

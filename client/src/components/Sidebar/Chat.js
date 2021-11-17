@@ -32,8 +32,17 @@ const Chat = (props) => {
   const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    if (conversation.numberOfUnreadMessages > 0)
-      await props.setReadStatus(conversation.id);
+    if (conversation.numberOfUnreadMessages > 0) {
+      const readMessages = conversation.messages
+        .filter((m) => {
+          if (m.senderId === otherUser.id && !m.isRead) {
+            return true;
+          }
+          return false;
+        })
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      await props.setReadStatus(readMessages[0]);
+    }
 
     await props.setActiveChat(conversation.otherUser.username);
   };
@@ -52,7 +61,7 @@ const Chat = (props) => {
           className={classes.messageBadge}
           badgeContent={conversation.numberOfUnreadMessages}
           color='primary'
-        ></Badge>
+        />
       )}
     </Box>
   );
@@ -60,8 +69,8 @@ const Chat = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setReadStatus: (id) => {
-      dispatch(setReadStatus(id));
+    setReadStatus: (message) => {
+      dispatch(setReadStatus(message));
     },
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));

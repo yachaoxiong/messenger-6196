@@ -90,20 +90,23 @@ const sendMessage = (data, body) => {
     sender: data.sender,
   });
 };
-
-const updateConversationReadStatus = async (body) => {
+const sendLastReadMessage = (message) => {
+  socket.emit('read-message', message);
+};
+const updateConversationReadStatus = async (message) => {
   const { data } = await axios.post('/api/messages/readStatus', {
-    conversationId: body,
+    conversationId: message.conversationId,
   });
   return data;
 };
 
-export const setReadStatus = (body) => async (dispatch) => {
+export const setReadStatus = (message) => async (dispatch) => {
   try {
-    const result = await updateConversationReadStatus(body);
-    if (result.success) {
-      dispatch(setcurrentMessaageStatus(body));
-    }
+    await updateConversationReadStatus(message);
+
+    dispatch(setcurrentMessaageStatus(message));
+
+    sendLastReadMessage(message);
   } catch (error) {
     console.error(error);
   }
