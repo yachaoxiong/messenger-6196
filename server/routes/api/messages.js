@@ -44,7 +44,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.post('/readStatus', async (req, res, next) => {
+router.post('/read-status', async (req, res, next) => {
   const { conversationId } = req.body;
   if (!req.user) {
     return res.sendStatus(401);

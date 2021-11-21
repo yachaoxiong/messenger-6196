@@ -94,7 +94,7 @@ const sendLastReadMessage = (message) => {
   socket.emit('read-message', message);
 };
 const updateConversationReadStatus = async (message) => {
-  const { data } = await axios.post('/api/messages/readStatus', {
+  const { data } = await axios.post('/api/messages/read-status', {
     conversationId: message.conversationId,
   });
   return data;
