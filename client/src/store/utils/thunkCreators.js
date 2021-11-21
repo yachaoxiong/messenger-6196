@@ -5,13 +5,13 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  setcurrentMessaageStatus,
 } from '../conversations';
 import { gotUser, setFetchingStatus } from '../user';
 
 axios.interceptors.request.use(async function (config) {
   const token = await localStorage.getItem('messenger-token');
   config.headers['x-access-token'] = token;
-
   return config;
 });
 
@@ -89,6 +89,27 @@ const sendMessage = (data, body) => {
     recipientId: body.recipientId,
     sender: data.sender,
   });
+};
+const sendLastReadMessage = (message) => {
+  socket.emit('read-message', message);
+};
+const updateConversationReadStatus = async (message) => {
+  const { data } = await axios.patch('/api/messages/read-status', {
+    conversationId: message.conversationId,
+  });
+  return data;
+};
+
+export const setReadStatus = (message) => async (dispatch) => {
+  try {
+    await updateConversationReadStatus(message);
+
+    dispatch(setcurrentMessaageStatus(message));
+
+    sendLastReadMessage(message);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 // message format to send: {recipientId, text, conversationId}
