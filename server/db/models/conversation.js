@@ -1,5 +1,5 @@
 const { Sequelize, Op } = require('sequelize');
-const { Participant } = require('.');
+const { Participant } = require('./particpant');
 const db = require('../db');
 const Message = require('./message');
 
