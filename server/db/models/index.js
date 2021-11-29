@@ -26,23 +26,3 @@ module.exports = {
   Message,
   Participant,
 };
-
-// [
-//   {
-//     id: 1,
-//     mode: 'private',
-//     otherUser: {},
-//     participants: [{}, {}],
-//     messages: [{}, {}],
-//     lastReadMessage: 'hello',
-//     numberOfUnreadMessages: 2,
-//   },
-//   {
-//     id: '2',
-//     name: 'hatchway group',
-//     mode: 'group',
-//     participants: [{}, {}],
-//     messages: [{}, {}],
-//     lastMessages: 'hi',
-//   },
-// ];
