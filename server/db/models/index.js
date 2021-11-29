@@ -2,22 +2,23 @@ const Conversation = require('./conversation');
 const User = require('./user');
 const Message = require('./message');
 const Participant = require('./particpant');
-// associations
 
+// associations
 User.hasMany(Conversation);
 Conversation.belongsTo(User, { as: 'user1' });
 Conversation.belongsTo(User, { as: 'user2' });
-Conversation.belongsTo(User, { as: 'creator' });
 
-User.hasMany(Participant);
-User.hasMany(Message);
-Message.belongsTo(Conversation);
-Message.belongsTo(User, { as: 'sender' });
-
-Conversation.hasMany(Message);
 Participant.belongsTo(Conversation);
-Participant.belongsTo(User, { as: 'user' });
 Conversation.hasMany(Participant);
+
+Participant.belongsToMany(User, { through: 'UserParticipant' });
+User.belongsToMany(Participant, { through: 'UserParticipant' });
+
+Message.belongsToMany(User, { through: 'UserMessage' });
+User.belongsToMany(Message, { through: 'UserMessage' });
+
+Message.belongsTo(Conversation);
+Conversation.hasMany(Message);
 
 module.exports = {
   User,
@@ -25,3 +26,23 @@ module.exports = {
   Message,
   Participant,
 };
+
+// [
+//   {
+//     id: 1,
+//     mode: 'private',
+//     otherUser: {},
+//     participants: [{}, {}],
+//     messages: [{}, {}],
+//     lastReadMessage: 'hello',
+//     numberOfUnreadMessages: 2,
+//   },
+//   {
+//     id: '2',
+//     name: 'hatchway group',
+//     mode: 'group',
+//     participants: [{}, {}],
+//     messages: [{}, {}],
+//     lastMessages: 'hi',
+//   },
+// ];
